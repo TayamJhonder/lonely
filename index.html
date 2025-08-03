@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Hugot Website</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      height: 100vh;
+      overflow: hidden;
+      background: black;
+      position: relative;
+    }
+
+    video#bgVideo {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+      z-index: -1;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      height: 100vh;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      padding: 2rem;
+      opacity: 0;
+      transition: opacity 0.6s ease;
+    }
+
+    .container.show {
+      opacity: 1;
+    }
+
+    button {
+      padding: 1.5rem 3rem;
+      font-size: clamp(2rem, 5vw, 3rem);
+      margin: 20px;
+      border: none;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      cursor: pointer;
+      transition: 0.3s ease;
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      width: 90%;
+      max-width: 600px;
+    }
+
+    button:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .loading-screen {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: white;
+      color: black;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      z-index: 20;
+      padding: 1rem;
+    }
+
+    .typewriter-text {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      white-space: pre-wrap;
+      text-align: center;
+      color: black;
+    }
+
+    .hugot-line {
+      font-size: clamp(2rem, 5vw, 3rem);
+      margin-top: 2rem;
+      white-space: pre-wrap;
+      text-align: center;
+      padding: 0 1rem;
+      background: linear-gradient(270deg, #ff4e50, #fc913a, #f9d423, #eae374, #e1f5c4, #4ecdc4, #556270);
+      background-size: 400% 400%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: gradientMove 5s ease infinite, softGlow 2.5s ease-in-out infinite, fadeIn 1s ease;
+    }
+
+    .credit-text {
+      position: fixed;
+      bottom: 10px;
+      right: 15px;
+      color: white;
+      font-size: clamp(1.2rem, 2vw, 1.8rem);
+      opacity: 0.9;
+      z-index: 1000;
+    }
+
+    .fade-out {
+      animation: fadeOut 1s ease forwards;
+    }
+
+    @keyframes fadeOut {
+      to {
+        opacity: 0;
+        visibility: hidden;
+      }
+    }
+
+    @keyframes gradientMove {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    @keyframes softGlow {
+      0% { text-shadow: 0 0 4px rgba(0, 0, 0, 0.1); }
+      100% { text-shadow: 0 0 12px rgba(0, 0, 0, 0.3); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    #hugotContainer {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      z-index: 5;
+      backdrop-filter: blur(5px) brightness(0.8);
+      padding: 1rem;
+    }
+
+    #hugotVideo {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    .touch-effect {
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.3);
+      transform: translate(-50%, -50%);
+      animation: ripple 0.5s ease-out forwards;
+      pointer-events: none;
+      z-index: 1000;
+    }
+
+    @keyframes ripple {
+      from {
+        transform: translate(-50%, -50%) scale(0.5);
+        opacity: 1;
+      }
+      to {
+        transform: translate(-50%, -50%) scale(3);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<video id="bgVideo" autoplay muted loop playsinline>
+  <source src="/roblox.mp4" type="video/mp4">
+</video>
+
+<div class="credit-text">Made by: Jhonder Tayam</div>
+
+<div class="loading-screen" id="loadingScreen">
+  <div class="typewriter-text" id="introType"></div>
+</div>
+
+<div class="container" id="mainButtons">
+  <button onclick="playHugot('iniwan')">Iniwan ka na ba?</button>
+  <button onclick="playHugot('mahal_pa')">Mahal mo pa ba?</button>
+  <button onclick="playHugot('di_mahal')">Di ka na niya mahal?</button>
+</div>
+
+<audio id="bgAudio" src="/bluesky.mp3"></audio>
+<audio id="mahalAudio" src="/sameground1.mp3"></audio>
+<audio id="airplaneAudio" src="/airplane1.mp3"></audio>
+<audio id="typeAudio" src="/fasttype.mp3"></audio>
+
+<script>
+const introText = "Ready ka na ba sa mga tanong at sampal ng katotohanan dahil di mo siya pinag laban?";
+const introContainer = document.getElementById("introType");
+const typeAudio = document.getElementById("typeAudio");
+
+function typeIntro() {
+  let i = 0;
+  const speed = 80;
+  typeAudio.currentTime = 0;
+  typeAudio.play();
+
+  const interval = setInterval(() => {
+    introContainer.textContent += introText[i];
+    i++;
+    if (i >= introText.length) {
+      clearInterval(interval);
+      typeAudio.pause();
+      typeAudio.currentTime = 0;
+    }
+  }, speed);
+}
+
+window.onload = () => {
+  typeIntro();
+  setTimeout(() => {
+    document.getElementById("loadingScreen").classList.add("fade-out");
+    const mainButtons = document.getElementById("mainButtons");
+    mainButtons.style.display = "flex";
+    requestAnimationFrame(() => mainButtons.classList.add("show"));
+  }, 8000);
+};
+
+const hugotLines = {
+  iniwan: [
+    "Buti nga sa'yo... dami mo kasing pagkukulang sa kanya.",
+    "Anong aasahan mo kung puro sarili mo lang iniisip mo?",
+    "Kung pinili mo lang sanang pakinggan siya, baka hindi ka iniwan.",
+    "Mahal ka nga niya... pero nasasakal na rin sya sayo.",
+    "Napagod siya — kasi habang ikaw nagpapahinga, siya lumalaban mag-isa."
+  ],
+  mahal_pa: [
+    "Hanggang ngayon siya pa rin laman ng puso mo, 'di ba?",
+    "Kahit pilitin mong ngumiti, siya pa rin dahilan ng sakit mo.",
+    "Kahit ilang beses mong iwasan, siya pa rin ang gusto mong balikan.",
+    "Di mo lang masabi... pero siya pa rin ang dahilan ng iyak mo gabi-gabi.",
+    "Kahit alam mong mali, siya pa rin ang iniisip mo bago ka matulog."
+  ],
+  di_mahal: [
+    "Ginawa mo na ang lahat... pero hindi pa rin sapat.",
+    "Hindi na siya masaya — kahit andiyan ka pa.",
+    "Hindi mo kasalanan kung hindi ka na niya kayang mahalin.",
+    "Minsan kahit anong effort mo, wala ka pa ring puwang sa puso niya.",
+    "Hindi lahat ng mahal mo, kaya kang mahalin pabalik."
+  ]
+};
+
+function typeWriterEffect(container, text, callback) {
+  const p = document.createElement('p');
+  p.className = "hugot-line";
+  container.appendChild(p);
+  let i = 0;
+  const interval = setInterval(() => {
+    p.textContent += text[i];
+    i++;
+    if (i === text.length) {
+      clearInterval(interval);
+      setTimeout(callback, 2900);
+    }
+  }, 90);
+}
+
+function playHugot(type) {
+  const mainButtons = document.getElementById("mainButtons");
+  mainButtons.classList.remove("show");
+  mainButtons.style.display = "none";
+  document.getElementById("loadingScreen").style.display = "flex";
+  document.getElementById("introType").textContent = "";
+
+  const container = document.createElement('div');
+  container.id = "hugotContainer";
+
+  const video = document.createElement('video');
+  video.id = "hugotVideo";
+  video.autoplay = true;
+  video.loop = true;
+  video.muted = true;
+  video.playsInline = true;
+  video.style.display = 'none';
+
+  const source = document.createElement('source');
+  source.src = type === 'iniwan' ? '/sad1.mp4' : type === 'mahal_pa' ? '/sad2.mp4' : '/sad3.mp4';
+  source.type = "video/mp4";
+
+  video.appendChild(source);
+  container.appendChild(video);
+  document.body.appendChild(container);
+
+  video.load();
+  video.play();
+
+  setTimeout(() => {
+    document.getElementById('loadingScreen').style.display = 'none';
+    video.style.display = 'block';
+
+    const lines = hugotLines[type];
+    let index = 0;
+
+    function showNext() {
+      if (index < lines.length) {
+        if (index % 2 === 0) container.querySelectorAll('p').forEach(p => p.remove());
+        typeWriterEffect(container, "💔 " + lines[index], () => {
+          index++;
+          showNext();
+        });
+      }
+    }
+
+    showNext();
+
+    const bgAudio = document.getElementById("bgAudio");
+    const mahalAudio = document.getElementById("mahalAudio");
+    const airplaneAudio = document.getElementById("airplaneAudio");
+
+    [bgAudio, mahalAudio, airplaneAudio].forEach(audio => {
+      audio.pause();
+      audio.currentTime = 0;
+    });
+
+    if (type === "iniwan") {
+      bgAudio.play();
+    } else if (type === "mahal_pa") {
+      mahalAudio.play();
+    } else if (type === "di_mahal") {
+      airplaneAudio.play();
+    }
+
+    setTimeout(() => {
+      [bgAudio, mahalAudio, airplaneAudio].forEach(audio => {
+        audio.pause();
+        audio.currentTime = 0;
+      });
+      container.remove();
+      mainButtons.style.display = 'flex';
+      requestAnimationFrame(() => mainButtons.classList.add("show"));
+    }, 32000);
+  }, 2000);
+}
+
+document.addEventListener("pointerdown", function(e) {
+  const ripple = document.createElement("div");
+  ripple.className = "touch-effect";
+  ripple.style.left = e.clientX + "px";
+  ripple.style.top = e.clientY + "px";
+  document.body.appendChild(ripple);
+  ripple.addEventListener("animationend", () => ripple.remove());
+});
+</script>
+</body>
+</html>
